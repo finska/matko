@@ -1,3 +1,3 @@
 class User < ApplicationRecord
-  has_many :code
+  has_many :codes
 end
