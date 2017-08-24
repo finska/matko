@@ -14,18 +14,25 @@ class ScraperController < ApplicationController
   def scrape_into_db(code, code_id)
     search_html(code).each do |row|
       td = row.css('td')
+      insert_record_if_not_exists(td, code_id)
+    end
+  end
+
+  def insert_record_if_not_exists(td, code_id)
+    time = DateTime.parse(td[0].inner_html)
+    if (Scrape.find_by(code_id: code_id, time: time, status: td[1].inner_html, place: td[2].inner_html) == nil)
       Scrape.create(code_id: code_id, time: td[0].inner_html, status: td[1].inner_html, place: td[2].inner_html)
     end
   end
 
   def search_html(code)
     html = nokogiri_html_page(code)
-    return html.css('.events-table').css('tbody').css('tr')
+    html.css('.events-table').css('tbody').css('tr')
   end
 
 
   def nokogiri_html_page(code)
-    return Nokogiri::HTML(open('https://www.matkahuolto.fi/en/seuranta/tilanne/?package_code=' + code))
+    Nokogiri::HTML(open('https://www.matkahuolto.fi/en/seuranta/tilanne/?package_code=' + code))
   end
 
   private
