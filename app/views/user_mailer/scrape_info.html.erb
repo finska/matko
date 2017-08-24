@@ -1,0 +1,7 @@
+<h1><%= @user.email %></h1>
+
+
+<% @scrape.each do |row| %>
+        <p><%= row.time %>  <%= row.status %>  <%= row.place %></p>
+<% end %>
+

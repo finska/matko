@@ -16,6 +16,7 @@ class ScraperController < ApplicationController
       td = row.css('td')
       insert_record_if_not_exists(td, code_id)
     end
+    send_email(code_id)
   end
 
   def insert_record_if_not_exists(td, code_id)
@@ -23,6 +24,13 @@ class ScraperController < ApplicationController
     if (Scrape.find_by(code_id: code_id, time: time, status: td[1].inner_html, place: td[2].inner_html) == nil)
       Scrape.create(code_id: code_id, time: td[0].inner_html, status: td[1].inner_html, place: td[2].inner_html)
     end
+  end
+
+  def send_email(code_id)
+    scrape = Scrape.where(code_id: code_id)
+    code = Code.find(code_id)
+    user = User.find(code.user_id)
+    UserMailer.scrape_info(user, scrape).deliver
   end
 
   def search_html(code)
