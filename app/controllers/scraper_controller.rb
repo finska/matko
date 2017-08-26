@@ -20,22 +20,23 @@ class ScraperController < ApplicationController
   end
 
   def insert_record_if_not_exists(td, code_id)
-    time = DateTime.parse(td[0].inner_html)
-    if (Scrape.find_by(code_id: code_id, time: time, status: td[1].inner_html, place: td[2].inner_html) == nil)
-      Scrape.create(code_id: code_id, time: td[0].inner_html, status: td[1].inner_html, place: td[2].inner_html)
-    end
+    Scrape.find_or_create_by!(code_id: code_id,
+                              time:    td[0].inner_html.to_datetime,
+                              status:  td[1].inner_html,
+                              place:   td[2].inner_html)
   end
 
   def send_email(code_id)
     scrape = Scrape.where(code_id: code_id)
-    code = Code.find(code_id)
-    user = User.find(code.user_id)
+    code   = Code.find(code_id)
+    user   = User.find(code.user_id)
     UserMailer.scrape_info(user, scrape).deliver
   end
 
   def search_html(code)
-    html = nokogiri_html_page(code)
-    html.css('.events-table').css('tbody').css('tr')
+    nokogiri_html_page(code)
+        .css('.events-table').css('tbody')
+        .css('tr')
   end
 
 

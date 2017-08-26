@@ -1,0 +1,1 @@
+{"virtualbox":{"/home/vagrant/workshop":{"create":true,"guestpath":"/home/vagrant/workshop","hostpath":"D:/Ruby/laragon/www/matko/workshop","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"D:/Ruby/laragon/www/matko","disabled":false,"__vagrantfile":true}}}
