@@ -47,16 +47,18 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+  ActionMailer::Base.default :from => 'matkotestis@gmail.com'
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      address: 'smtp.gmail.com',
-      port: 465,
-      domain: 'example.com',
-      user_name: 'predigrabend',
-      password: 'mwctgessfkxduhqb',
+      address: 'smtp.mailtrap.io',
+      port: 2525,
+      domain: 'mailtrap.io',
+      user_name: '2f5fc77f4741c8',
+      password: '942af6acb9d7fa',
       authentication: 'plain',
       enable_starttls_auto: true}
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
 end

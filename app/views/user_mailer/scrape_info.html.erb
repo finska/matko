@@ -2,6 +2,6 @@
 
 
 <% @scrape.each do |row| %>
-        <p><%= row.time %>  <%= row.status %>  <%= row.place %></p>
+        <p><%= row.time %>  <%= row.status %>  <%= raw(row.place) %></p>
 <% end %>
 
