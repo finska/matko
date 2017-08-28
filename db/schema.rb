@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20170826222047) do
     t.datetime "time"
     t.text "status"
     t.text "place"
-    t.boolean "notified"
+    t.boolean "notified", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

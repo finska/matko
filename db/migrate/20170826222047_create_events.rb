@@ -5,7 +5,7 @@ class CreateEvents < ActiveRecord::Migration[5.1]
       t.datetime :time
       t.text :status
       t.text :place
-      t.boolean :notified
+      t.boolean :notified, default: false
 
       t.timestamps
     end

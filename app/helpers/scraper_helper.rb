@@ -31,7 +31,7 @@ module ScraperHelper
     code = Shipment.find(code_id)
     user = User.find(code.user_id)
     if (email_not_sent(code_id))
-      scrape = Event.where(code_id: code_id)
+      scrape = Event.where(code_id: code_id).order(time: :desc)
       scrape.each do |row|
         row.update(notified: true)
       end
@@ -45,5 +45,30 @@ module ScraperHelper
     else
       return false
     end
+  end
+
+  def check_all_shipments
+    if (Shipment.exists?)
+      shipment = Shipment.all
+      shipment.each do |row|
+        scrape_into_db(row.code, row.id)
+        user = User.find(row.user_id)
+        if (email_not_sent(row.id))
+          scrape = Event.where(code_id: row.id).order(time: :desc)
+          scrape.each do |row|
+            row.update(notified: true)
+          end
+          UserMailer.scrape_info(user, scrape).deliver
+        end
+      end
+    end
+  end
+end
+
+class Pusni
+  include ScraperHelper
+
+  def ga
+    check_all_shipments()
   end
 end

@@ -12,9 +12,6 @@ class ScraperController < ApplicationController
     redirect_to '/'
   end
 
-  def testis
-
-  end
 
   private
   def user_params

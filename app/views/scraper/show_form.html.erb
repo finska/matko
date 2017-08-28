@@ -1,7 +1,0 @@
-<h3>Your credentials</h3>
-<form action="scraper/store" method="post">
-  <%= hidden_field_tag :authenticity_token, form_authenticity_token -%>
-  <input type="email" name="user[email]" placeholder="Email address"><br>
-  <input type="text" name="user[code]" placeholder="Your tracking code"><br>
-  <button type="submit">Save</button>
-</form>
