@@ -50,13 +50,13 @@ Rails.application.configure do
   ActionMailer::Base.default :from => 'matkotestis@gmail.com'
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-      address: 'smtp.mailtrap.io',
-      port: 2525,
-      domain: 'mailtrap.io',
-      user_name: '2f5fc77f4741c8',
-      password: '942af6acb9d7fa',
-      authentication: 'plain',
-      enable_starttls_auto: true}
+      :user_name => '2f5fc77f4741c8',
+      :password => '942af6acb9d7fa',
+      :address => 'smtp.mailtrap.io',
+      :domain => 'smtp.mailtrap.io',
+      :port => '2525',
+      :authentication => :cram_md5
+  }
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   # config.file_watcher = ActiveSupport::EventedFileUpdateChecker
