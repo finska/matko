@@ -5,14 +5,14 @@ module ScraperHelper
     Nokogiri::HTML(open("https://www.matkahuolto.fi/en/seuranta/tilanne/?package_code=#{code}"))
   end
 
-  def search_html(code)
+  def events_table_tbody_info(code)
     nokogiri_html_page(code)
         .css('.events-table').css('tbody')
         .css('tr')
   end
 
   def scrape_into_db(code, code_id)
-    search_html(code).each do |row|
+    events_table_tbody_info(code).each do |row|
       td = row.css('td')
       Event.find_or_create_by!(code_id: code_id,
                                time:    td[0].inner_html.to_datetime,
@@ -62,13 +62,5 @@ module ScraperHelper
         end
       end
     end
-  end
-end
-
-class Pusni
-  include ScraperHelper
-
-  def ga
-    check_all_shipments()
   end
 end
