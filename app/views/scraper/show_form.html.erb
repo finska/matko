@@ -4,6 +4,11 @@
   <div class="col-sm-4">
     <form action="scraper/store" method="post">
       <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <select class="form-control" name="user[provider]" id="exampleFormControlSelect1">
+        <% @providers.each do |provider| %>
+          <option><%= provider.name %></option>
+        <% end %>
+      </select><br>
       <input class="form-control" name="user[email]" placeholder="Email address" type="email">
       <br/>
       <input class="form-control" name="user[code]" placeholder="Your tracking code" type="text">
@@ -13,4 +18,5 @@
     <h1 class="output"></h1>
   </div>
 </div>
+
 
