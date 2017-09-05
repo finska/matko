@@ -1,0 +1,16 @@
+<h3>Your credentials</h3>
+<hr>
+<div class="row">
+  <div class="col-sm-4">
+    <form action="scraper/store" method="post">
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <input class="form-control" name="user[email]" placeholder="Email address" type="email">
+      <br/>
+      <input class="form-control" name="user[code]" placeholder="Your tracking code" type="text">
+      <br/>
+      <button class="btn btn-success btn-block" type="submit">Save</button>
+    </form>
+    <h1 class="output"></h1>
+  </div>
+</div>
+
