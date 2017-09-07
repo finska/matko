@@ -19,7 +19,7 @@ class NokogiriScrape
 	def send_email(shipment_code_id)
 		code = ShipmentCode.find(shipment_code_id)
 		user = User.find(code.user_id)
-		if (email_not_sent(shipment_code_id))
+		if email_not_sent(shipment_code_id)
 			scrape = ShipmentEvent.where(shipment_code_id: shipment_code_id).order(time: :desc)
 			scrape.each do |row|
 				row.update(user_notified: true)
@@ -30,13 +30,13 @@ class NokogiriScrape
 	
 	
 	def check_all_shipments
-		if (ShipmentCode.exists?)
+		if ShipmentCode.exists?
 			shipment_codes = ShipmentCode.all
 			shipment_codes.each do |row|
 				provider = Provider.find(row.provider_id)
 				scrape_into_db(provider.address, row.code, row.id)
 				user = User.find(row.user_id)
-				if (email_not_sent(row.id))
+				if email_not_sent(row.id)
 					scrape = ShipmentEvent.where(shipment_code_id: row.id).order(time: :desc)
 					scrape.each do |row|
 						row.update(user_notified: true)
@@ -49,10 +49,7 @@ class NokogiriScrape
 	
 	
 	def email_not_sent(shipment_code_id)
-		if (ShipmentEvent.exists?(shipment_code_id: shipment_code_id, user_notified: false))
-			return true
-		else
-			return false
-		end
+		(ShipmentEvent.exists?(shipment_code_id: shipment_code_id,
+		                       user_notified: false)) ? true : false
 	end
 end
