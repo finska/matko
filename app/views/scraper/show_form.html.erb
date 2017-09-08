@@ -1,11 +1,11 @@
 <br>
 <div class="row">
   <div class="col-sm-4 col-o">
-	  <h3>Your credentials</h3>
-	  <hr>
+    <h3>Your credentials</h3>
+    <hr>
     <form action="scraper/store" method="post">
       <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-		<select class="form-control" name="user[provider]" id="exampleFormControlSelect1">
+      <select class="form-control" name="user[provider]" id="exampleFormControlSelect1">
         <% @providers.each do |provider| %>
           <option><%= provider.name %></option>
         <% end %>
@@ -16,35 +16,37 @@
       <br/>
       <button class="btn btn-success btn-block" type="submit">Save</button>
     </form>
-	  </div>
-	<div class="col-sm-6">
-		<% if @shipment_events != nil %>
-				<h3>Shipping events</h3>
-				<% if flash[:status] %>
-						<span class="badge badge-pill badge-danger"><%= flash[:status] %></span>
-				<% else %>
-						<span class="badge badge-pill badge-success">You have been already notified for this events</span>
-				<% end %>
-
-				<table class="table table-bordered">
-			  <thead>
-			    <tr>
-			      <th>Time</th>
-			      <th>Status</th>
-			    </tr>
-			  </thead>
-              <tbody>
-      <% @shipment_events.each do |event| %>
-                <tr>
-			      <td><%= event.time.to_formatted_s(:long) %></td>
-			      <td><%= event.status %></td>
-                </tr>
-            <% end %>
-              </tbody>
-            </table>
-	  <% end %>
+  </div>
+  <div class="col-sm-6">
+    <% if @shipment_events != nil %>
+      <h3>Shipment Status:
+        <% if flash[:status] %>
+          <%= flash[:status] %>
+        <% end %>
+      </h3>
+      <% if flash[:status] %>
+        <% if flash[:status] == 'Delivered' %>
+          <span class="badge badge-pill badge-danger">Your shipment is "<%= flash[:status] %>" and you wont get any more notifications regarding this one! Case closed!</span>
+        <% else %>
+          <span class="badge badge-pill badge-success">Your shipment is "<%= flash[:status] %>" and you will get notified when something change!</span>
+        <% end %>
+      <% end %>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @shipment_events.each do |event| %>
+            <tr>
+              <td><%= event.time.to_formatted_s(:long) %></td>
+              <td><%= event.status %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   </div>
 </div>
-
-
-

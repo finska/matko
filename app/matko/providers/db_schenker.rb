@@ -24,7 +24,7 @@ class DBSchenker
 			time = (td[1].text + ', '+ td[2].text).to_datetime
 			ShipmentEvent.find_or_create_by!(shipment_code_id: shipment_code_id,
 			                                 time: time,
-			                                 status: td[0].text,
+			                                 status: clean_string(td[0].text),
 			                                 place: '')
 		end
 	end
@@ -36,6 +36,6 @@ class DBSchenker
 	
 	
 	def clean_string(string)
-		string.squish.gsub(/<p>[\s$]*<\/p>/, '')
+		string.squish.gsub(/<p>[\s$]*<\/p>/, '').strip
 	end
 end

@@ -20,12 +20,11 @@ class NokogiriScrape
 		code = ShipmentCode.find(shipment_code_id)
 		user = User.find(code.user_id)
 		if email_not_sent(shipment_code_id)
-			scrape = ShipmentEvent.where(shipment_code_id: shipment_code_id).order(time: :desc)
-			scrape.each do |row|
+			events = ShipmentEvent.where(shipment_code_id: shipment_code_id).order(time: :desc)
+			events.each do |row|
 				row.update(user_notified: true)
 			end
-			UserMailer.scrape_info(user, scrape).deliver
-			flash[:status] = 'We just sent you notification on your email!'
+			UserMailer.scrape_info(user, events).deliver
 		end
 	end
 	
@@ -38,11 +37,11 @@ class NokogiriScrape
 				scrape_into_db(provider.address, row.code, row.id)
 				user = User.find(row.user_id)
 				if email_not_sent(row.id)
-					scrape = ShipmentEvent.where(shipment_code_id: row.id).order(time: :desc)
-					scrape.each do |row|
-						row.update(user_notified: true)
+					events = ShipmentEvent.where(shipment_code_id: row.id).order(time: :desc)
+					events.each do |event|
+						event.update(user_notified: true)
 					end
-					UserMailer.scrape_info(user, scrape).deliver
+					UserMailer.scrape_info(user, events).deliver
 				end
 			end
 		end
@@ -52,5 +51,24 @@ class NokogiriScrape
 	def email_not_sent(shipment_code_id)
 		(ShipmentEvent.exists?(shipment_code_id: shipment_code_id,
 		                       user_notified: false)) ? true : false
+	end
+	
+	
+	def summary_shipment_status(shipment_code_id)
+		last_event_status = ShipmentEvent
+			.where(shipment_code_id: shipment_code_id)
+			.order(time: :asc)
+			.last.status
+		status_states.each do |key, value|
+			value.detect {|val| return (key.capitalize) if val == last_event_status}
+		end
+	end
+	
+	
+	def status_states
+		{'not sent' => ['Electronic advance notice received', 'Received for carriage', 'Luettu terminaalissa'],
+		 'transit' => ['En route', 'Saapunut terminaaliin'],
+		 'waiting pickup' => ['Ready to be collected', 'Recipient notified by SMS', 'Vastaanotettu noutopisteessä'],
+		 'delivered' => ['Handed over to the recipient', 'Asiakas noutanut']}
 	end
 end

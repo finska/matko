@@ -22,7 +22,7 @@ class Matkahuolto
 			td = row.css('td')
 			ShipmentEvent.find_or_create_by!(shipment_code_id: shipment_code_id,
 			                                 time: td[0].inner_html.to_datetime,
-			                                 status: td[1].inner_html,
+			                                 status: clean_string(td[1].inner_html),
 			                                 place: clean_string(td[2].inner_html))
 		end
 	end
@@ -34,6 +34,6 @@ class Matkahuolto
 	
 	
 	def clean_string(string)
-		string.squish.gsub(/<p>[\s$]*<\/p>/, '')
+		string.squish.gsub(/<p>[\s$]*<\/p>/, '').strip
 	end
 end
