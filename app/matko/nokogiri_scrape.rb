@@ -25,6 +25,7 @@ class NokogiriScrape
 				row.update(user_notified: true)
 			end
 			UserMailer.scrape_info(user, scrape).deliver
+			flash[:status] = 'We just sent you notification on your email!'
 		end
 	end
 	

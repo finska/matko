@@ -3,6 +3,11 @@ class ScraperController < ApplicationController
 	
 	def show_form
 		@providers = Provider.all.order('id')
+		if flash[:code_id]
+			shipment_code = ShipmentCode.find(flash[:code_id])
+			@shipment_events = ShipmentEvent.where(shipment_code_id: shipment_code.id)
+			@notified = @shipment_events.where(user_notified: false)
+		end
 	end
 	
 	
@@ -13,8 +18,10 @@ class ScraperController < ApplicationController
 		code = ShipmentCode.find_or_create_by!(user_id: user.id,
 		                                       provider_id: provider.id,
 		                                       code: shipment_code)
-		noko = NokogiriScrape.new
-		noko.scrape_into_db(provider.address, shipment_code, code.id)
+		NokogiriScrape.new.scrape_into_db(provider.address,
+		                                  shipment_code,
+		                                  code.id)
+		flash[:code_id] = code.id
 		redirect_to '/'
 	end
 	
