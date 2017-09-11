@@ -1,21 +1,36 @@
 <br>
-<div class="row">
+<div class="row justify-content-sm-center">
   <div class="col-sm-4 col-o">
     <h3>Your credentials</h3>
     <hr>
     <form action="scraper/store" method="post">
       <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-      <select class="form-control" name="user[provider]" id="exampleFormControlSelect1">
+      <select class="form-control form-control-sm" name="user[provider]" id="exampleFormControlSelect1">
         <% @providers.each do |provider| %>
           <option><%= provider.name %></option>
         <% end %>
       </select><br>
-      <input class="form-control" name="user[email]" placeholder="Email address" type="email">
+      <input class="form-control form-control-sm" name="user[email]" placeholder="Email address" type="email">
       <br/>
-      <input class="form-control" name="user[code]" placeholder="Your tracking code" type="text">
+      <input class="form-control form-control-sm" name="user[code]" placeholder="Your tracking code" type="text">
       <br/>
-      <button class="btn btn-success btn-block" type="submit">Save</button>
+      <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
     </form>
+    <% if flash[:warning] %>
+      <%= flash[:warning] %>
+    <% end %>
+    <% if @shipment_events != nil %>
+      <% if flash[:status] %>
+        <% if flash[:status] != 'Delivered' %>
+          <form class="form-inline" id="additional-email-form" action="scraper/additional-email" method="post">
+            <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+            <input type="hidden" name="email[user_id]" value="<%= @shipment_code.user_id %>">
+            <a href="" class="question-email">Send additional email with this info to someone?</a>
+            <div class="additional-email"></div>
+          </form>
+        <% end %>
+      <% end %>
+    <% end %>
   </div>
   <div class="col-sm-6">
     <% if @shipment_events != nil %>
@@ -31,7 +46,7 @@
           <span class="badge badge-pill badge-success">Your shipment is "<%= flash[:status] %>" and you will get notified when something change!</span>
         <% end %>
       <% end %>
-      <table class="table table-bordered">
+      <table class="table table-bordered table-sm">
         <thead>
           <tr>
             <th>Time</th>

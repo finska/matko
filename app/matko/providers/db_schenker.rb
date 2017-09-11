@@ -27,11 +27,17 @@ class DBSchenker
 			                                 status: clean_string(td[0].text),
 			                                 place: '')
 		end
+		additional_information(provider_address, code)
 	end
 	
 	
-	def shipping_state
-	
+	def additional_information(provider_address, code)
+		code_row = ShipmentCode.where(code: code).first
+		details = nokogiri_html_page(provider_address, code).css('.detailsTable')
+		from = details.css('#lblDeparture').text()
+		to = details.css('#lblDestination').text()
+		json = {'from' => from, 'to' => to}.to_json
+		code_row.update(additional_shipment_info: json)
 	end
 	
 	
