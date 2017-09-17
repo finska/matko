@@ -16,9 +16,9 @@ class ScraperController < ApplicationController
 		if user_params['email'].blank? and user_params['code'].blank?
 			flash[:warning] = 'You cannot send blank fields!'
 			redirect_to '/'
-		elsif ShipmentCode.exists?(code: user_params['code'])
-			flash[:warning] = 'We already have that code associated with another mail!'
-			redirect_to '/'
+		# elsif ShipmentCode.exists?(code: user_params['code'])
+		# 	flash[:warning] = 'We already have that code associated with another mail!'
+		# 	redirect_to '/'
 		else
 			user = User.find_or_create_by!(email: user_params['email'])
 			provider = Provider.find_by_name(user_params['provider'])
