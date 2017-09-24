@@ -3,12 +3,19 @@
   <head>
     <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
     <title>Matko</title>
-      <%= csrf_meta_tags %>
-      <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
-      <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
   <body>
-    <div class="container">
+    <nav class="navbar navbar-light bg-light">
+      <a class="navbar-brand" href="/">
+        <img src="<%= image_path 'tracker1.jpg' %>" width="90" height="70" class="d-inline-block align-top" alt="">
+        TrackLift
+      </a>
+    </nav>
+    <div class="container-fluid">
+      <br>
       <%= yield %>
     </div>
   </body>

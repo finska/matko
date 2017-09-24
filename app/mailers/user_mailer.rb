@@ -4,9 +4,8 @@ class UserMailer < ApplicationMailer
   #
   #   en.user_mailer.scrape_info.subject
   #
-  def scrape_info(user, scrape)
-    @user = user
+  def scrape_info(email, scrape)
     @scrape = scrape
-    mail to: user.email
+    mail to:email
   end
 end

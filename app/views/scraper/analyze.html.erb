@@ -1,0 +1,72 @@
+<div class="row justify-content-center text-center">
+  <div class="col-lg-auto col-md-auto">
+    <h3>Current status of your shipment is: "<%= flash[:status].upcase %>"
+    </h3>
+    <hr>
+    <!--<span class="badge badge-pill badge-danger">Your shipment is DELIVERED and you wont get any more notifications regarding this one! Case closed!</span>-->
+    <% if @shipment_events != nil %>
+      <table class="table table-bordered table-sm">
+        <thead>
+          <tr>
+            <th class="text-center">Time</th>
+            <th class="text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @shipment_events.each do |event| %>
+            <tr>
+              <td><%= event.time.to_formatted_s(:long) %></td>
+              <td><%= event.status %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="lead">There's no information for that shipment???</p>
+    <% end %>
+  </div>
+  <div class="col-xl-2 col-lg-3 col-sm-12 col-md-auto banner">
+    <img class="img-fluid img-thumbnail" src="<%= image_path 'b6.jpg' %>" alt="">
+    <img class="img-fluid img-thumbnail" src="<%= image_path 'b7.jpg' %>" alt="">
+    <img class="img-fluid img-thumbnail" src="<%= image_path 'b8.jpg' %>" alt="">
+  </div>
+</div>
+<hr>
+<div class="row justify-content-center">
+  <!--Main form on page-->
+  <div class="col-xl-auto col-lg-auto col-md-auto col-sm-12 primary-email-form">
+    <% if @primary_email != nil and @additional_email == nil%>
+      <p class="lead">Email address associated with this shipment is: <%= @primary_email %></p>
+      <p class="lead">Do you wish to send additional email to someone close?</p>
+      <hr>
+      <form action="scraper/additional-email" method="post" onsubmit="secondary_email_address(this); return false;">
+        <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Additional email address" type="email">
+        <br/>
+        <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
+      </form>
+    <% elsif @additional_email != nil %>
+      <p class="lead">You already entered email addresses and you will be informed!</p>
+    <% else %>
+      <p class="lead">Enter email address to be informed when shipping status change!</p>
+      <hr>
+      <form action="scraper/store-email" method="post" onsubmit="primary_email_address(this); return false;">
+        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+        <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Email address" type="email">
+        <br/>
+        <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
+      </form>
+    <% end %>
+  </div>
+  <!--End of main form-->
+  <div class="col-xl-2 col-lg-auto col-md-auto col-sm-12">
+    <p class="lead">Emails associated with shipment:</p>
+    <ul class="emails-associated">
+      <% if @primary_email != nil %>
+        <li><%= @primary_email %></li>
+      <% end %>
+      <% if @additional_email != nil %>
+        <li><%= @additional_email.email %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

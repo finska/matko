@@ -3,44 +3,71 @@ class ScraperController < ApplicationController
 	
 	def show_form
 		@providers = Provider.all.order('id')
-		if flash[:code_id]
-			
-			@shipment_code = ShipmentCode.find(flash[:code_id])
-			@shipment_events = ShipmentEvent.where(shipment_code_id: @shipment_code.id)
-			@notified = @shipment_events.where(user_notified: false)
-		end
 	end
 	
 	
-	def store
-		if user_params['email'].blank? and user_params['code'].blank?
-			flash[:warning] = 'You cannot send blank fields!'
-			redirect_to '/'
-		# elsif ShipmentCode.exists?(code: user_params['code'])
-		# 	flash[:warning] = 'We already have that code associated with another mail!'
-		# 	redirect_to '/'
+	def analyze
+		if ShipmentCode.exists?(code: params[:code])
+			shipment = ShipmentCode.find_by_code(params[:code])
+			@user = User.find(shipment.user_id)
+			if @user.email != shipment.code
+				@primary_email = @user.email
+			end
+			if UserFamily.exists?(user_id: shipment.user_id)
+				@additional_email = UserFamily.find_by_user_id(shipment.user_id)
+			end
 		else
-			user = User.find_or_create_by!(email: user_params['email'])
-			provider = Provider.find_by_name(user_params['provider'])
-			shipment_code = user_params['code']
-			code = ShipmentCode.find_or_create_by!(user_id: user.id,
-			                                       provider_id: provider.id,
-			                                       code: shipment_code)
-			nokogiri_scrape = NokogiriScrape.new
-			nokogiri_scrape.scrape_into_db(provider.address,
-			                               shipment_code,
-			                               code.id)
-			flash[:status] = nokogiri_scrape.summary_shipment_status(code.id)
-			flash[:code_id] = code.id
-			redirect_to '/'
+			@user = User.find_or_create_by!(email: params[:code])
+		end
+		provider = Provider.find_by_name(params[:provider])
+		shipment_code = params[:code]
+		@code = ShipmentCode.find_or_create_by!(user_id: @user.id,
+		                                        provider_id: provider.id,
+		                                        code: shipment_code)
+		nokogiri_scrape = NokogiriScrape.new
+		nokogiri_scrape.scrape_into_db(provider.address,
+		                               shipment_code,
+		                               @code.id)
+		@shipment_events = ShipmentEvent.where(shipment_code_id: @code.id)
+		summary_shipment_status = nokogiri_scrape.summary_shipment_status(@code.id)
+		flash[:status] = summary_shipment_status
+		flash[:code_id] = @code.id
+	end
+	
+	
+	def store_email
+		email = params[:email]
+		user = User.find(params[:user_id])
+		
+		
+		user.update(email: email)
+		
+		nokogiri_scrape = NokogiriScrape.new
+		nokogiri_scrape.send_email(params[:shipment_code_id], user.email)
+		
+		respond_to do |format|
+			format.json {render json: {'email_address' => user.email, 'shipment_id' => params[:shipment_code_id]}}
 		end
 	end
 	
 	
 	def additional_email
-		additional_email = additional_email_params['additional_email']
-		user_id = additional_email_params['user_id']
-		UserFamily.find_or_create_by!(user_id: user_id, email: additional_email)
+		additional_email = params[:email]
+		user_id = params[:user_id]
+		shipmentCodeId = params[:shipment_code_id]
+		UserFamily.find_or_create_by!(user_id: user_id, shipment_code_id: shipmentCodeId, email: additional_email)
+		
+		events = ShipmentEvent.where(shipment_code_id: shipmentCodeId)
+		events.each do |row|
+			row.update(user_notified: false)
+		end
+		
+		nokogiri_scrape = NokogiriScrape.new
+		nokogiri_scrape.send_email(shipmentCodeId, additional_email)
+		
+		respond_to do |format|
+			format.json {render json: {'add_email' => additional_email}}
+		end
 	end
 	
 	

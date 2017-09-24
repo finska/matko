@@ -12,19 +12,24 @@ class NokogiriScrape
 		instance.scrape_data(provider_address,
 		                     code,
 		                     shipment_code_id)
-		send_email(shipment_code_id)
+		# send_email(shipment_code_id)
 	end
 	
 	
-	def send_email(shipment_code_id)
-		code = ShipmentCode.find(shipment_code_id)
-		user = User.find(code.user_id)
+	def scrape_only(provider_address, code)
+		instance = provider_instance(provider_address)
+		instance.scrape_info(provider_address,
+		                     code)
+	end
+	
+	
+	def send_email(shipment_code_id, email)
 		if email_not_sent(shipment_code_id)
 			events = ShipmentEvent.where(shipment_code_id: shipment_code_id).order(time: :desc)
 			events.each do |row|
 				row.update(user_notified: true)
 			end
-			UserMailer.scrape_info(user, events).deliver
+			UserMailer.scrape_info(email, events).deliver
 		end
 	end
 	
@@ -33,15 +38,19 @@ class NokogiriScrape
 		if ShipmentCode.exists?
 			shipment_codes = ShipmentCode.all
 			shipment_codes.each do |row|
-				provider = Provider.find(row.provider_id)
-				scrape_into_db(provider.address, row.code, row.id)
-				user = User.find(row.user_id)
-				if email_not_sent(row.id)
-					events = ShipmentEvent.where(shipment_code_id: row.id).order(time: :desc)
-					events.each do |event|
-						event.update(user_notified: true)
+				if summary_shipment_status(row.id) != 'Delivered'
+					provider = Provider.find(row.provider_id)
+					scrape_into_db(provider.address, row.code, row.id)
+					user = User.find(row.user_id)
+					family = UserFamily.where(user_id: row.user_id).first
+					if email_not_sent(row.id)
+						events = ShipmentEvent.where(shipment_code_id: row.id).order(time: :desc)
+						events.each do |event|
+							event.update(user_notified: true)
+						end
+						UserMailer.scrape_info(user.email, events).deliver
+						UserMailer.scrape_info(family.email, events).deliver
 					end
-					UserMailer.scrape_info(user, events).deliver
 				end
 			end
 		end
