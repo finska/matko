@@ -33,31 +33,41 @@
 </div>
 <hr>
 <div class="row justify-content-center">
-  <!--Main form on page-->
-  <div class="col-xl-auto col-lg-auto col-md-auto col-sm-12 primary-email-form">
-    <% if @primary_email != nil and @additional_email == nil%>
-      <p class="lead">Email address associated with this shipment is: <%= @primary_email %></p>
-      <p class="lead">Do you wish to send additional email to someone close?</p>
-      <hr>
-      <form action="scraper/additional-email" method="post" onsubmit="secondary_email_address(this); return false;">
-        <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Additional email address" type="email">
-        <br/>
-        <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
-      </form>
-    <% elsif @additional_email != nil %>
-      <p class="lead">You already entered email addresses and you will be informed!</p>
-    <% else %>
-      <p class="lead">Enter email address to be informed when shipping status change!</p>
-      <hr>
-      <form action="scraper/store-email" method="post" onsubmit="primary_email_address(this); return false;">
-        <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
-        <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Email address" type="email">
-        <br/>
-        <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
-      </form>
+  <% if @primary_email == nil or flash[:status] != 'Delivered'%>
+    <!--Main form on page-->
+    <div class="col-xl-auto col-lg-auto col-md-auto col-sm-12 primary-email-form">
+      <% if @primary_email != nil and @additional_email == nil%>
+        <p class="lead">Email address associated with this shipment is: <%= @primary_email %></p>
+        <p class="lead">Do you wish to send additional email to someone close?</p>
+        <hr>
+        <form action="scraper/additional-email" method="post" onsubmit="secondary_email_address(this); return false;">
+          <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Additional email address" type="email">
+          <br/>
+          <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
+        </form>
+      <% elsif @additional_email != nil %>
+        <p class="lead">You already entered email addresses and you will be informed!</p>
+      <% else %>
+        <p class="lead">Enter email address to be informed when shipping status change!</p>
+        <hr>
+        <form action="scraper/store-email" method="post" onsubmit="primary_email_address(this); return false;">
+          <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+          <input class="form-control form-control-sm" name="user[email]" data="<%= @user.id %>" shipment="<%= @code.id %>" placeholder="Email address" type="email">
+          <br/>
+          <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
+        </form>
+      <% end %>
+    </div>
+    <!--End of main form-->
+  <% else %>
+    <% if flash[:status] == 'Delivered' %>
+      <div class="col-auto">
+        <div class="alert alert-success" role="alert">
+          You wont get any notifications about this shipment because is DELIVERED! Thank you!
+        </div>
+      </div>
     <% end %>
-  </div>
-  <!--End of main form-->
+  <% end %>
   <div class="col-xl-2 col-lg-auto col-md-auto col-sm-12">
     <p class="lead">Emails associated with shipment:</p>
     <ul class="emails-associated">
