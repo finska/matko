@@ -28,6 +28,15 @@ class Matkahuolto
 	end
 	
 	
+	def scrape_info(provider_address, code)
+		information = events_table_tbody_info(provider_address, code).map do |row|
+			td = row.css('td')
+			[td[0].inner_html.to_datetime, clean_string(td[1].inner_html)].to_h
+		end
+		return information
+	end
+	
+	
 	def shipping_state
 	
 	end
