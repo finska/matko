@@ -64,12 +64,14 @@ class NokogiriScrape
 	
 	
 	def summary_shipment_status(shipment_code_id)
-		last_event_status = ShipmentEvent
-			.where(shipment_code_id: shipment_code_id)
-			.order(time: :asc)
-			.last.status
-		status_states.each do |key, value|
-			value.detect {|val| return (key.capitalize) if val == last_event_status}
+		if ShipmentEvent.exists?(shipment_code_id: shipment_code_id)
+			last_event_status = ShipmentEvent
+				.where(shipment_code_id: shipment_code_id)
+				.order(time: :asc)
+				.last.status
+			status_states.each do |key, value|
+				value.detect {|val| return (key.capitalize) if val == last_event_status}
+			end
 		end
 	end
 	

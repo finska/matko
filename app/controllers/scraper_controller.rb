@@ -19,19 +19,37 @@ class ScraperController < ApplicationController
 		else
 			@user = User.find_or_create_by!(email: params[:code])
 		end
-		provider = Provider.find_by_name(params[:provider])
-		shipment_code = params[:code]
-		@code = ShipmentCode.find_or_create_by!(user_id: @user.id,
-		                                        provider_id: provider.id,
-		                                        code: shipment_code)
-		nokogiri_scrape = NokogiriScrape.new
-		nokogiri_scrape.scrape_into_db(provider.address,
-		                               shipment_code,
-		                               @code.id)
-		@shipment_events = ShipmentEvent.where(shipment_code_id: @code.id)
-		summary_shipment_status = nokogiri_scrape.summary_shipment_status(@code.id)
-		flash[:status] = summary_shipment_status
-		flash[:code_id] = @code.id
+		if Provider.exists?(name: params[:provider])
+			provider = Provider.find_by_name(params[:provider])
+			shipment_code = params[:code]
+			@code = ShipmentCode.find_or_create_by!(user_id: @user.id,
+			                                        provider_id: provider.id,
+			                                        code: shipment_code)
+			nokogiri_scrape = NokogiriScrape.new
+			nokogiri_scrape.scrape_into_db(provider.address,
+			                               shipment_code,
+			                               @code.id)
+			if ShipmentEvent.exists?(shipment_code_id: @code.id)
+				@shipment_events = ShipmentEvent.where(shipment_code_id: @code.id)
+				summary_shipment_status = nokogiri_scrape.summary_shipment_status(@code.id)
+				flash[:status] = summary_shipment_status
+				flash[:code_id] = @code.id
+			else
+				ShipmentCode.find_by_code(params[:code]).delete
+				User.find_by_email(params[:code]).delete
+				flash[:status_first] = 'There is no records for that combination of provider and code! Check that your code is correct!'
+				redirect_to '/'
+			end
+		else
+			flash[:status] = 'There is no provider with that name, please choose from dropdown list!'
+			redirect_to '/'
+		end
+	end
+	
+	
+	private
+	def check_if_provider_exist
+		Provider.exists?(name: params[:provider])
 	end
 	
 	

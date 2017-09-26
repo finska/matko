@@ -14,5 +14,15 @@
       <button class="btn btn-success btn-block btn-sm" type="submit">Save</button>
     </form>
   </div>
-  <!--End of main form-->
+    <!--End of main form-->
 </div>
+<% if flash[:status_first] %>
+    <br>
+    <div class="row justify-content-center">
+    <div class="col-auto">
+        <div class="alert alert-success" role="alert">
+          <%= flash[:status_first] %>
+        </div>
+      </div>
+</div>
+<% end %>
