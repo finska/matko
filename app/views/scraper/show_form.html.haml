@@ -1,0 +1,20 @@
+.row.justify-content-center
+  / Main form on page
+  .col-3
+    %h3.text-center Provider and tracking code
+    %hr/
+    %form{:action => "scraper/analyze", :method => "get"}
+      %select#exampleFormControlSelect1.form-control.form-control-sm{:name => "provider"}
+        - @providers.each do |provider|
+          %option= provider.name
+      %br/
+      %input.form-control.form-control-sm{:name => "code", :placeholder => "Your tracking code", :required => "", :type => "text"}/
+      %br/
+      %button.btn.btn-success.btn-block.btn-sm{:type => "submit"} Save
+  / End of main form
+- if flash[:status_first]
+  %br/
+  .row.justify-content-center
+    .col-auto
+      .alert.alert-danger{:role => "alert"}
+        = flash[:status_first]

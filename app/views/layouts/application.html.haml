@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %title Matko
+    = csrf_meta_tags
+    = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+  %body
+    %nav.navbar.navbar-light.bg-light
+      %a.navbar-brand{:href => "/"}
+        %img.d-inline-block.align-top{:alt => "", :height => "70", :src => "#{image_path 'tracker1.jpg'}", :width => "90"}/
+        TrackLift
+    .container-fluid
+      %br/
+      = yield

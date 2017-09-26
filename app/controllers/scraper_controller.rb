@@ -47,12 +47,6 @@ class ScraperController < ApplicationController
 	end
 	
 	
-	private
-	def check_if_provider_exist
-		Provider.exists?(name: params[:provider])
-	end
-	
-	
 	def store_email
 		email = params[:email]
 		user = User.find(params[:user_id])
