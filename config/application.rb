@@ -12,5 +12,6 @@ module Matko
 		require './app/matko/nokogiri_scrape'
 		require './app/matko/providers/db_schenker'
 		require './app/matko/providers/matkahuolto'
+		require './app/matko/providers/posti'
 	end
 end

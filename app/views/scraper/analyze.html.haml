@@ -1,8 +1,10 @@
 .row.justify-content-center.text-center
   .col-lg-auto.col-md-auto
-    %h3
-      Current status of your shipment is: "#{flash[:status].upcase}"
-    %hr/
+    - if flash[:status] == 'Unknown'
+    - else
+      %h3
+        Current status of your shipment is: "#{flash[:status]}"
+      %hr/
     / <span class="badge badge-pill badge-danger">Your shipment is DELIVERED and you wont get any more notifications regarding this one! Case closed!</span>
     - if @shipment_events != nil
       %table.table.table-bordered.table-sm
@@ -30,8 +32,7 @@
     / Main form on page
     .col-xl-auto.col-lg-auto.col-md-auto.col-sm-12.primary-email-form
       - if @primary_email != nil and @additional_email == nil
-        %p.lead
-          Email address associated with this shipment is: #{@primary_email}
+
         %p.lead Do you wish to send additional email to someone close?
         %hr/
         %form{:action => 'scraper/additional-email', :method => 'post', :onsubmit => "secondary_email_address(this); return false;"}

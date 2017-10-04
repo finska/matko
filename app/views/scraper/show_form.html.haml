@@ -2,11 +2,12 @@
   / Main form on page
   .col-3
     %h3.text-center Provider and tracking code
+    -  params.inspect
     %hr/
     %form{:action => "scraper/analyze", :method => "get"}
       %select#exampleFormControlSelect1.form-control.form-control-sm{:name => "provider"}
         - @providers.each do |provider|
-          %option= provider.name
+          %option{:value=>provider.id}= provider.name
       %br/
       %input.form-control.form-control-sm{:name => "code", :placeholder => "Your tracking code", :required => "", :type => "text"}/
       %br/

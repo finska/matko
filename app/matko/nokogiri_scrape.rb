@@ -69,17 +69,22 @@ class NokogiriScrape
 				.where(shipment_code_id: shipment_code_id)
 				.order(time: :asc)
 				.last.status
-			status_states.each do |key, value|
-				value.detect {|val| return (key.capitalize) if val == last_event_status}
+			if result = status_states.values.find {|val| val.include? last_event_status}
+				status_states.key(result).titleize
+			else
+				'Unknown'
 			end
+			# status_states.each do |key, value|
+			# 	value.detect {|val| return (key.capitalize) if val == last_event_status}
+			# end
 		end
 	end
 	
 	
 	def status_states
 		{'not sent' => ['Electronic advance notice received', 'Received for carriage', 'Luettu terminaalissa'],
-		 'transit' => ['En route', 'Saapunut terminaaliin'],
-		 'waiting pickup' => ['Ready to be collected', 'Recipient notified by SMS', 'Vastaanotettu noutopisteessä'],
-		 'delivered' => ['Handed over to the recipient', 'Asiakas noutanut']}
+		 'in transit' => ['En route', 'Saapunut terminaaliin'],
+		 'waiting pickup' => ['Ready to be collected', 'Loaded for delivery', 'Waiting to be loaded for delivery', 'Recipient notified by SMS', 'Vastaanotettu noutopisteessä'],
+		 'delivered' => ['Handed over to the recipient', 'Asiakas noutanut', 'Delivered']}
 	end
 end

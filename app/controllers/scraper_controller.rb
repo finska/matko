@@ -19,8 +19,8 @@ class ScraperController < ApplicationController
 		else
 			@user = User.find_or_create_by!(email: params[:code])
 		end
-		if Provider.exists?(name: params[:provider])
-			provider = Provider.find_by_name(params[:provider])
+		if Provider.exists?(id: params[:provider])
+			provider = Provider.find(params[:provider])
 			shipment_code = params[:code]
 			@code = ShipmentCode.find_or_create_by!(user_id: @user.id,
 			                                        provider_id: provider.id,
@@ -30,7 +30,7 @@ class ScraperController < ApplicationController
 			                               shipment_code,
 			                               @code.id)
 			if ShipmentEvent.exists?(shipment_code_id: @code.id)
-				@shipment_events = ShipmentEvent.where(shipment_code_id: @code.id)
+				@shipment_events = ShipmentEvent.where(shipment_code_id: @code.id).order(time: :desc)
 				summary_shipment_status = nokogiri_scrape.summary_shipment_status(@code.id)
 				flash[:status] = summary_shipment_status
 				flash[:code_id] = @code.id
