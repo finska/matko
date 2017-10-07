@@ -10,10 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170924103735) do
+ActiveRecord::Schema.define(version: 20171006111306) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "companies", force: :cascade do |t|
+    t.string "code"
+    t.string "name"
+    t.string "host"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "providers", force: :cascade do |t|
     t.string "name"
@@ -27,6 +35,7 @@ ActiveRecord::Schema.define(version: 20170924103735) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "additional_shipment_info"
+    t.integer "company_id"
     t.index ["provider_id"], name: "index_shipment_codes_on_provider_id"
     t.index ["user_id"], name: "index_shipment_codes_on_user_id"
   end
@@ -39,6 +48,7 @@ ActiveRecord::Schema.define(version: 20170924103735) do
     t.boolean "user_notified", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "company_id"
     t.index ["shipment_code_id"], name: "index_shipment_events_on_shipment_code_id"
   end
 
@@ -53,6 +63,7 @@ ActiveRecord::Schema.define(version: 20170924103735) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "company_id"
   end
 
   add_foreign_key "shipment_codes", "providers"
