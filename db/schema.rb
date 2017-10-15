@@ -10,10 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171006111306) do
+ActiveRecord::Schema.define(version: 20171015113447) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "banners", force: :cascade do |t|
+    t.bigint "company_id"
+    t.string "image"
+    t.string "link"
+    t.boolean "status"
+    t.datetime "active_from"
+    t.datetime "active_to"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["company_id"], name: "index_banners_on_company_id"
+  end
 
   create_table "companies", force: :cascade do |t|
     t.string "code"
@@ -36,19 +48,21 @@ ActiveRecord::Schema.define(version: 20171006111306) do
     t.datetime "updated_at", null: false
     t.text "additional_shipment_info"
     t.integer "company_id"
+    t.string "link"
     t.index ["provider_id"], name: "index_shipment_codes_on_provider_id"
     t.index ["user_id"], name: "index_shipment_codes_on_user_id"
   end
 
   create_table "shipment_events", force: :cascade do |t|
     t.bigint "shipment_code_id"
-    t.datetime "time"
     t.text "status"
-    t.text "place"
-    t.boolean "user_notified", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "company_id"
+    t.datetime "provider"
+    t.datetime "query"
+    t.text "details"
+    t.text "label"
     t.index ["shipment_code_id"], name: "index_shipment_events_on_shipment_code_id"
   end
 
@@ -66,6 +80,7 @@ ActiveRecord::Schema.define(version: 20171006111306) do
     t.integer "company_id"
   end
 
+  add_foreign_key "banners", "companies"
   add_foreign_key "shipment_codes", "providers"
   add_foreign_key "shipment_codes", "users"
   add_foreign_key "shipment_events", "shipment_codes"
