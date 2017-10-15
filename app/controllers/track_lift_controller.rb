@@ -9,4 +9,7 @@ class TrackLiftController < ApplicationController
 		
 		Company.find_or_create_by!(code: code, name: name, host: host)
 	end
+	
+	
+	
 end

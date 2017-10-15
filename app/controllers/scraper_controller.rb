@@ -24,7 +24,8 @@ class ScraperController < ApplicationController
 			shipment_code = params[:code]
 			@code = ShipmentCode.find_or_create_by!(user_id: @user.id,
 			                                        provider_id: provider.id,
-			                                        code: shipment_code)
+			                                        code: shipment_code,
+			                                        company_id: '1') # added to suspend error
 			nokogiri_scrape = NokogiriScrape.new
 			nokogiri_scrape.scrape_into_db(provider.address,
 			                               shipment_code,
